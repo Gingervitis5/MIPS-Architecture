@@ -1,0 +1,34 @@
+.data
+array: .word 3, 5, 21, 7, 3, 4, 5, 8
+n_elem: .word 8
+
+.text
+.globl main
+main: 
+la $a1, array			#$a1 is our array
+lw $s1, n_elem			#$s1 is n_elem
+addi $t0, $0, 0			#$t0 is i
+
+for:
+bge $t0, $s1, exit		#i >= n_elem
+j innerloop
+
+innerloop:
+lw $t1, 0($a1)			#load first element into $t1
+addi $sp, $sp, -4		#decrement stack pointer
+sw $t1, 0($sp)			#save $t1 onto the stack
+jal func			#jump to func
+
+
+exit			
+li $v0, 10
+syscall
+
+func: 
+lw $t1, 0($sp)			#load the value on stack into $t1
+andi $t2, $t1, 1		#and $t1 with 1
+beq $t2, 1, print		#check if $t1 is odd
+
+
+print:
+

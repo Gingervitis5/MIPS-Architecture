@@ -1,0 +1,28 @@
+.data
+.text
+.globl main
+main:
+addi $t0, $0, 20		#$t0 is 20
+addi $t1, $0, 5			#$t1 is 5
+addi $sp, $sp, -4		#move stack down 4
+sw $t0, 0($sp)			#save $t0
+addi $sp, $sp, -4		#move stack down 4
+sw $t1, 0($sp)			#save $t1
+
+jal subtract
+lw $t2, 0($sp)			#get return value from stack
+move $a0, $t2
+li $v0, 1			#syscall number for printing integer
+syscall
+
+addi $sp, $sp, 12		#retract the stack pointer
+addi $v0, $0, 10		#end program
+syscall
+
+subtract:
+lw $t0, 4($sp)			#get $t0 in subroutine
+lw $t1, 0($sp)			#get $t1 in subroutine
+sub $v0, $t0, $t1		#$t2 is the subtraction
+addi $sp, $sp, -4		#decrement stack pointer
+sw $v0, 0($sp)			#save $v0 as a return value onto the stack
+jr $ra

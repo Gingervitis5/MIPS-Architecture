@@ -1,0 +1,64 @@
+.data
+.align 2		#align n --> next allocation starts at 2^n boundary
+array: .word -9, -2, 3, 8, 5, 0, 0, 0, 1, 1, 90, 99, 99, 99, -1, -1, -1, 87, 78, 12
+n_elem: .word 20
+
+.text
+.globl main
+main:
+addi $s1, $0, 0		#$s1 is our sorted variable
+la $a1, array		#$a1 is the address of array
+lw $s2, n_elem		#$s2 is n_elem
+addi $t3, $0, 0		#print counter
+
+TOP:	
+la $a1, array		#restart at array beginning		
+addi $s1, $s1, 1	#sorted = 1
+addi $t0, $0, 0		#j = 0
+
+FOR:
+bge $t0, $s2, BAILOUT#j less than n_elem
+j INNERLOOP		#jump innerloop
+
+INNERLOOP:
+lw $t1, 0($a1)		#array[j]
+lw $t2, 4($a1)		#array[j+1]
+bgtu $t1, $t2, SWITCH	#array[j] > array[j+1]
+j INCREMENT
+
+SWITCH:
+sw $t2, 0($a1)		#switch
+sw $t1, 4($a1)		#
+addi $s1, $0, 0		#sorted = 0
+j INCREMENT
+
+INCREMENT:
+addi $t0, $t0, 1	#j++
+addi $a1, $a1, 4	#Next array element
+j FOR
+
+BAILOUT:
+la $a1, array		#restart at array beginning
+beq $s1, 1, PRINT	#if array sorted, go print 
+j TOP		
+
+PRINT:
+bge $t3, $s2, EXIT	#counts to make sure we don't overflow the array
+lw $t4, 0($a1)		#load array[i] into $t4
+addi $a1, $a1, 4	#get next element
+
+li $v0, 1		#syscall number for printing integer
+move $a0, $t4
+syscall
+
+li $a0, 32		#syscall number for printing white space
+li $v0, 11
+syscall
+
+addi $t3, $t3, 1	#move to next array element
+j PRINT
+
+EXIT:
+li $v0, 10
+syscall
+.end main
