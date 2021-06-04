@@ -67,7 +67,7 @@ forloop2:
 beq $s1, $s2, exit2	#i < size
 addi $s1, $s1, 1	#i++
 
-addi $sp, $sp, -8	#increment stack pointer
+addi $sp, $sp, -8	#decrement stack pointer
 lw $t3, 0($a1)		#load kaki[i]
 lw $t4, 4($a1)		#load kaki[i+1]
 sw $t4, 0($sp)		#pass kaki[i+1] to stack
